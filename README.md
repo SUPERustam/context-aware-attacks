@@ -1,7 +1,9 @@
 # Context-Aware Adversarial Attacks
-### [Paper](http://arxiv.org/abs/2112.03223) | [Code](https://github.com/CSIPlab/context-aware-attacks) | [Slides](https://github.com/CSIPlab/context-aware-attacks/blob/main/doc/slides.pdf) | [Poster](https://github.com/CSIPlab/context-aware-attacks/blob/main/doc/poster.pdf) | [Video](https://aaai-2022.virtualchair.net/poster_aaai6996)
+### [Paper](http://arxiv.org/abs/2112.03223) | [Code](https://github.com/SUPERustam/context-aware-attacks) | [Results of Sequential Attacks](evaluate/evaluate.txt) | [Results of Transfer Attacks](evaluate/evaluate_bb.txt) 
 
-Pytorch implementation of *Context-Aware Transfer Attacks for Object Detection* in AAAI 2022.
+[Reporduction] Pytorch implementation of *Context-Aware Transfer Attacks for Object Detection* in AAAI 2022.
+
+>_The original repo have some implicit details/small bugs which I fix/show in this repo_
 
 [Context-Aware Transfer Attacks for Object Detection](http://arxiv.org/abs/2112.03223)  
  [Zikui Cai](https://zikuicai.github.io/), Xinxin Xie, Shasha Li, Mingjun Yin, Chengyu Song,Srikanth V. Krishnamurthy, Amit K. Roy-Chowdhury,
@@ -13,24 +15,22 @@ Blackbox transfer attacks for image classifiers have been extensively studied in
 <img src='doc/framework.png'>
 
 
-
 ## Environment
-See `requirements.txt`, some key dependencies are:
+See `requirements.txt` (_update corect installtion instructures_), some key dependencies are:
 
 * python==3.7
 * torch==1.7.0 
 * mmcv-full==1.3.3
 
-
 Install mmcv-full https://github.com/open-mmlab/mmcv.
 
 ```
-pip install mmcv-full==1.3.3 -f https://download.openmmlab.com/mmcv/dist/{cu_version}/torch1.7.0/index.html
-# depending on your cuda version
+pip install mmcv-full==1.3.3 -f https://download.openmmlab.com/mmcv/dist/cu110/torch1.7.0/index.html
+# depending on your cuda version (cuda 11 the newest for 1.3.3)
 ```
 
 ## Datasets
-Get VOC and COCO datasets under `/data` folder.
+Get VOC2007 and COCO2017 datasets under `/data` folder.
 ```
 cd data
 bash get_voc.sh
@@ -38,7 +38,7 @@ bash get_coco.sh
 ```
 
 ## Object Detection Models
-Get mmdetection code repo and download pretrained models.
+Get mmdetection code repo and download pretrained models (_also fixed paths_)
 ```
 cd detectors
 git clone https://github.com/zikuicai/mmdetection
@@ -49,28 +49,73 @@ python mmdet_model_info.py
 ```
 
 ## Attacks and Evaluation
-Run sequential attack.
-```
-cd attacks/attack_mmdetection
-python run_sequential_attack.py
+Run sequential attack. 
+>For reproducting original results, run every dataset in different folder (aka `root`) for futher exploring. Also run at every perturbation level: 10, 20, 30
+```sh
+cd attacks
+
+# for each experiment run like this. Every sequential_attack use ~7GB of VRAM in GPU
+python run_sequential_attack.py --eps 10 --root result_COCO --dataset coco
+... --eps 20
+... --eps 30
+python run_sequential_attack.py --eps 10 --root result_VOC --dataset voc
+... --eps 20
+... --eps 30
 ```
 
 Calculate fooling rate.
-```
-cd evaluate/fooling_rate
-python get_fooling_rate.py
+```sh
+cd evaluate
+# for each experiment run like this.
+python get_fooling_rate.py --eps 10 --root result_VOC
+...
+...
 ```
 
 Run transfer attacks on different blackbox models.
-```
-cd attacks/attack_mmdetection
-python run_transfer_attack.py
+```sh
+cd attacks
+
+# for each experiment run like this. Every run_transfer_attack use ~3GB of VRAM in GPU
+python run_transfer_attack.py --eps 10 --root result_COCO --dataset coco
+... --eps 20
+... --eps 30
 ```
 
 Calculate fooling rate again on blackbox results.
+```sh
+cd evaluate
+# for each experiment run like this.
+python get_fooling_rate.py --eps 10 --root result_VOC --bb
+...
+...
 ```
-cd evaluate/fooling_rate
-python get_fooling_rate.py -bb
+
+_if you accidently run several times same script run_sequential_attack.py or run_transfer_attack.py try run my custom [script](attacks/deduplicate_clean_attacks.py) to clean duplicates and wrong cache files_
+```sh
+cd attacks
+# for example
+python deduplicate_clean_attacks.py --eps 10 --root result_VOC --dataset voc
+```
+CLI interface of [deduplicate_clean_attacks.py](attacks/deduplicate_clean_attacks.py)
+```py
+    parser = argparse.ArgumentParser(
+        description="Deduplicate attack plans and remove wrong attack plans."
+    )
+
+    parser.add_argument(
+        "--eps", nargs="?", default=30, help="perturbation level: 10,20,30,40,50"
+    )
+    parser.add_argument(
+        "--root", nargs="?", default="result", help="the folder name of result"
+    )
+    parser.add_argument("-bb", action="store_true", help="use bb txt file")
+    parser.add_argument(
+        "--dataset",
+        nargs="?",
+        default="voc",
+        help="model dataset 'voc' or 'coco'. This will change txt file name",
+    )
 ```
 
 ## Overview of Code Structure
@@ -88,6 +133,7 @@ python get_fooling_rate.py -bb
 - attacks
     - code to attack the detectors
     - code to transfer attack other blackbox detectors
+    - _code to duplicate attack plans_
 - evaluate
     - code to calculate the fooling rate of whitebox and blackbox attacks
 
