@@ -1,7 +1,18 @@
-['Libra R-CNN', 'FCOS', 'FoveaBox', 'FreeAnchor', 'DETR', 'Deformable DETR']
+Meta info
+bb0 – black box Libra R-CNN
+bb1 – black box FCOS
+bb2 – black box FoveaBox
+bb3 – black box FreeAnchor
+bb4 – black box DETR
+bb5 – black box Deformable DETR
 
+each row – step
+each column – model
+
+----------------------------------------------------------------------------------------------------------
 python get_fooling_rate.py -bb --eps 30 --root result_COCO
 
+Output:
 n_steps: 6
 n_attack: 500
 
@@ -16,9 +27,9 @@ fooling rate:
 25.60	16.00	37.60	44.60	20.00	46.20
 26.20	16.00	38.00	45.20	20.60	46.80
 
-
 python get_fooling_rate.py -bb --eps 30 --root result_VOC
 
+Output:
 n_steps: 6
 n_attack: 500
 
@@ -33,9 +44,10 @@ fooling rate:
 38.40	24.00	54.20	58.00	35.20	61.00
 39.60	24.60	54.60	58.60	37.00	62.20
 
-
+----------------------------------------------------------------------------------------------------------
 python get_fooling_rate.py -bb --eps 20 --root result_COCO
 
+Output:
 n_steps: 6
 n_attack: 500
 
@@ -52,6 +64,7 @@ fooling rate:
 
 python get_fooling_rate.py -bb --eps 20 --root result_VOC
 
+Output:
 n_steps: 6
 n_attack: 500
 
@@ -66,8 +79,10 @@ fooling rate:
 33.60	19.60	45.20	52.60	28.80	52.60
 34.40	19.80	45.80	53.20	30.00	53.80
 
+----------------------------------------------------------------------------------------------------------
 python get_fooling_rate.py -bb --eps 10 --root result_COCO
 
+Output:
 n_steps: 6
 n_attack: 500
 
@@ -84,6 +99,7 @@ fooling rate:
 
 python get_fooling_rate.py -bb --eps 10 --root result_VOC
 
+Output:
 n_steps: 6
 n_attack: 500
 
