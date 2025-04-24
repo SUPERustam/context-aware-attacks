@@ -149,4 +149,26 @@ cython_debug/
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
+.idea/
+
+# datasets
+data/COCO/
+data/VOC/
+data/VOCtest_06-Nov-2007.tar
+data/VOCtrainval_06-Nov-2007.tar
+
+# models
+detectors/mmdetection/
+
+# notebooks
+context/cooccurrence_matrix_voc07_test.json
+context/voc_dist_mat.npy
+context/voc_size_mat.npy
+
+# results
+attacks/results/
+attacks/result_COCO/
+attacks/result_VOC/
+
+# vscode
+.vscode/

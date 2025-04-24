@@ -34,7 +34,7 @@ model_info = {
     'FCOS': {
         'config_file': 'configs/fcos/fcos_r50_caffe_fpn_gn-head_mstrain_640-800_2x_coco.py',
         'checkpoint_file': 'checkpoints/fcos_r50_caffe_fpn_gn-head_mstrain_640-800_2x_coco-d92ceeea.pth',
-        'download_link': 'https://openmmlab.oss-cn-hangzhou.aliyuncs.com/mmdetection/v2.0/fcos/fcos_r50_caffe_fpn_gn-head_mstrain_640-800_2x_coco/fcos_r50_caffe_fpn_gn-head_mstrain_640-800_2x_coco-d92ceeea.pth'
+        'download_link': 'https://download.openmmlab.com/mmdetection/v2.0/fcos/fcos_r50_caffe_fpn_gn-head_mstrain_640-800_2x_coco/fcos_r50_caffe_fpn_gn-head_mstrain_640-800_2x_coco-d92ceeea.pth'
     },
     'FoveaBox': {
         'config_file': 'configs/foveabox/fovea_r50_fpn_4x4_1x_coco.py',
@@ -76,9 +76,12 @@ def main():
             print(f"{model_name} already exist, {idx+1}/{len(model_info)}")
             continue
         print(f'downloading {model_name} {idx+1}/{len(model_info)}')
-        file_data = urllib.request.urlopen(url).read()
-        with open(checkpoints_root / file_name, 'wb') as f:
-            f.write(file_data)
+        try:
+            file_data = urllib.request.urlopen(url).read()
+            with open(checkpoints_root / file_name, 'wb') as f:
+                f.write(file_data)
+        except Exception as e:
+            print(f"Error downloading {model_name}: {e}")
 
 
 if __name__ == "__main__":
